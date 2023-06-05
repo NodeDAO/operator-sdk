@@ -6,6 +6,10 @@ log:
   # console or json
   format: console
 
+db:
+  dsn: root:rsw123456@tcp(127.0.0.1:3306)/operator_sdk?charset=utf8mb4&parseTime=true&loc=Local
+  logLevel: info
+
 eth:
   network: mainnet
   # ETH execution layer connection address

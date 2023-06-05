@@ -68,6 +68,7 @@ func (s *VnftExitScan) ExitScan(operatorId *big.Int) ([]*VnftRecord, error) {
 		pubkey := hexutil.Encode(pubkeyBytes)
 
 		vnft := &VnftRecord{
+			Network:    s.network,
 			OperatorId: operatorId,
 			TokenId:    tokenId,
 			Pubkey:     pubkey,

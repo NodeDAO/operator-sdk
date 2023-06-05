@@ -135,6 +135,7 @@ func (s *NETHExitScan) ExitScan(operatorId *big.Int) ([]*VnftRecord, error) {
 			pubkey := hexutil.Encode(pubkeyBytes)
 
 			vnfts = append(vnfts, &VnftRecord{
+				Network:    s.network,
 				OperatorId: operatorId,
 				TokenId:    tokenId,
 				Pubkey:     pubkey,

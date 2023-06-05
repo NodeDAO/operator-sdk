@@ -187,3 +187,4 @@ linters:
     - nakedret
     - nonamedreturns
     - depguard
+    - tagalign

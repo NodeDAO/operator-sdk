@@ -62,6 +62,9 @@ log:
   # console or json
   format: console
 
+db:
+  dsn: root:rsw123456@tcp(127.0.0.1:3306)/operator_sdk?charset=utf8mb4&parseTime=true&loc=Local
+
 eth:
   network: mainnet
   # ETH execution layer connection address
@@ -81,7 +84,7 @@ func ConfConfigDefaultYaml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "../conf/config-default.yaml", size: 352, mode: os.FileMode(420), modTime: time.Unix(1684814341, 0)}
+	info := bindataFileInfo{name: "../conf/config-default.yaml", size: 456, mode: os.FileMode(420), modTime: time.Unix(1685951987, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

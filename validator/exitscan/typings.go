@@ -19,6 +19,7 @@ const (
 )
 
 type VnftRecord struct {
+	Network    string
 	OperatorId *big.Int
 	TokenId    *big.Int
 	Pubkey     string
@@ -26,7 +27,7 @@ type VnftRecord struct {
 }
 
 func (v *VnftRecord) String() string {
-	return fmt.Sprintf("{OperatorId:%s, TokenId:%s, Pubkey:%s, Type:%v}", v.OperatorId.String(), v.TokenId.String(), v.Pubkey, v.Type)
+	return fmt.Sprintf("{Network:%s OperatorId:%s, TokenId:%s, Pubkey:%s, Type:%v}", v.Network, v.OperatorId.String(), v.TokenId.String(), v.Pubkey, v.Type)
 }
 
 type WithdrawalRequest struct {
@@ -57,8 +58,8 @@ type WithdrawalRequestScanner interface {
 // An example implementation will be provided, based on MySQL, see Example
 type ExitFilter interface {
 	// Filter To filter Vnft Records that have exited
-	// @return []*VnftRecord Filtered Vnft Record
-	Filter(operatorId *big.Int) ([]*VnftRecord, error)
+	// @return []*interface{} Filtered Vnft Record
+	Filter(operatorId *big.Int) ([]interface{}, error)
 }
 
 // ExitMarker To perform a validator exit, it needs to be flagged, and then it is used for filter
@@ -66,5 +67,5 @@ type ExitFilter interface {
 // The simplest way to implement the operator is to use db, see example
 type ExitMarker interface {
 	// ExitMark Mark the exit of the Vnft Record
-	ExitMark(operatorId *big.Int, vnftRecords *[]VnftRecord) error
+	ExitMark(operatorId *big.Int, vnftRecords []interface{}) error
 }
