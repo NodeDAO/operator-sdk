@@ -1,7 +1,3 @@
-// desc:
-// @author renshiwei
-// Date: 2023/4/7 11:38
-
 package contracts
 
 import (
