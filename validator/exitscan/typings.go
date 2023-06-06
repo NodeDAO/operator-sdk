@@ -59,7 +59,7 @@ type WithdrawalRequestScanner interface {
 type ExitFilter interface {
 	// Filter To filter Vnft Records that have exited
 	// @return []*interface{} Filtered Vnft Record
-	Filter(operatorId *big.Int) ([]interface{}, error)
+	Filter(operatorId *big.Int, vnftRecords []*VnftRecord) ([]*VnftRecord, error)
 }
 
 // ExitMarker To perform a validator exit, it needs to be flagged, and then it is used for filter
@@ -67,5 +67,5 @@ type ExitFilter interface {
 // The simplest way to implement the operator is to use db, see example
 type ExitMarker interface {
 	// ExitMark Mark the exit of the Vnft Record
-	ExitMark(operatorId *big.Int, vnftRecords []interface{}) error
+	ExitMark(operatorId *big.Int, vnftRecords []*VnftRecord) error
 }

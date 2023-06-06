@@ -60,9 +60,9 @@ func NewNETHExitScan(ctx context.Context, network, elAddr string) (*NETHExitScan
 	}, nil
 }
 
-// WithdrawalRequestScan Scanning the smart contract requires processing the exiting WithdrawalRequest
+// WithdrawalRequestScan Scanning the smart contract requires processing the exiting WithdrawalRequest.
 // !!! Handling exits is delayed, and additional operations are required to mark and filter the WithdrawalRequest,
-// the simplest way is to use db, see example for this part
+// the simplest way is to use db, see example for this part.
 func (s *NETHExitScan) WithdrawalRequestScan(operatorId *big.Int) ([]*withdrawalRequest.WithdrawalRequestWithdrawalInfo, error) {
 	withdrawalInfos := make([]*withdrawalRequest.WithdrawalRequestWithdrawalInfo, 0)
 
@@ -100,7 +100,7 @@ func (s *NETHExitScan) WithdrawalRequestScan(operatorId *big.Int) ([]*withdrawal
 }
 
 // ExitScan Filter for exits
-// !!! Use the filtered []WithdrawalRequest to operate
+// !!! Use the filtered []WithdrawalRequest to operator
 // @param operatorId operator id
 func (s *NETHExitScan) ExitScan(operatorId *big.Int) ([]*VnftRecord, error) {
 	vnfts := make([]*VnftRecord, 0)

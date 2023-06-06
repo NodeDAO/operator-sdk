@@ -2,7 +2,7 @@
 // @author renshiwei
 // Date: 2023/6/5
 
-package dbscan
+package dao
 
 import (
 	"github.com/NodeDAO/operator-sdk/config"
@@ -25,7 +25,7 @@ type NodedaoValidator struct {
 
 var nodedaoValidators []*NodedaoValidator
 
-func NewVnftRecord() *NodedaoValidator {
+func NewNodedaoValidator() *NodedaoValidator {
 	return new(NodedaoValidator)
 }
 
@@ -34,10 +34,14 @@ func (e *NodedaoValidator) TableName() string {
 }
 
 func (e *NodedaoValidator) CreateBatch(vnftRecords []*NodedaoValidator) error {
-	return config.GlobalDB.Create(vnftRecords).Error
+	return config.GlobalDB.Table(e.TableName()).Create(vnftRecords).Error
 }
 
 func (e *NodedaoValidator) GetByTokenIds(network string, tokenIds []*big.Int, isExit bool) ([]*NodedaoValidator, error) {
 	db := config.GlobalDB.Table(e.TableName()).Where("network = ? AND token_id IN ? AND is_exit = ?", network, tokenIds, isExit).Find(nodedaoValidators)
 	return nodedaoValidators, db.Error
+}
+
+func (e *NodedaoValidator) UpdateExited(network string, tokenIds []*big.Int) error {
+	return config.GlobalDB.Table(e.TableName()).Where("network = ? AND token_id IN ?", network, tokenIds).Updates(map[string]interface{}{"is_exit": true}).Error
 }
