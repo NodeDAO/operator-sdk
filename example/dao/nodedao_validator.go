@@ -17,7 +17,7 @@ type NodedaoValidator struct {
 	Pubkey     string             `gorm:"column:pubkey;" json:"pubkey"`
 	OperatorId *big.Int           `gorm:"column:operator_id;" json:"operator_id"`
 	TokenId    *big.Int           `gorm:"column:token_id;" json:"token_id"`
-	Type       exitscan.VnftOwner `gorm:"column:type;" json:"type"`
+	Type       exitscan.StakeType `gorm:"column:type;" json:"type"`
 	IsExit     bool               `gorm:"column:is_exit;" json:"is_exit"`
 	Ctime      time.Time          `gorm:"column:ctime;default" json:"ctime"`
 	Mtime      time.Time          `gorm:"column:mtime;default" json:"mtime"`
@@ -37,8 +37,8 @@ func (e *NodedaoValidator) CreateBatch(vnftRecords []*NodedaoValidator) error {
 	return config.GlobalDB.Table(e.TableName()).Create(vnftRecords).Error
 }
 
-func (e *NodedaoValidator) GetByTokenIds(network string, tokenIds []*big.Int, isExit bool) ([]*NodedaoValidator, error) {
-	db := config.GlobalDB.Table(e.TableName()).Where("network = ? AND token_id IN ? AND is_exit = ?", network, tokenIds, isExit).Find(nodedaoValidators)
+func (e *NodedaoValidator) GetByTokenIds(network string, operatorId *big.Int, tokenIds []*big.Int, unstakeType exitscan.StakeType, isExit bool) ([]*NodedaoValidator, error) {
+	db := config.GlobalDB.Table(e.TableName()).Where("network = ? AND operator_id = ? AND token_id IN ? AND type =? AND is_exit = ?", network, operatorId, tokenIds, unstakeType, isExit).Find(&nodedaoValidators)
 	return nodedaoValidators, db.Error
 }
 

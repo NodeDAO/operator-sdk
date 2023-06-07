@@ -101,3 +101,13 @@ func NewWithdrawalRequestContract(network string, eth1Client bind.ContractBacken
 	}
 	return e, nil
 }
+
+func LiqContractAddress(network string) string {
+	address := ""
+	if strings.ToLower(network) == eth1.MAINNET {
+		address = LIQ_ADDRESS_MAINNET
+	} else if strings.ToLower(network) == eth1.GOERLI {
+		address = LIQ_ADDRESS_GOERLI
+	}
+	return address
+}

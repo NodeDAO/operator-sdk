@@ -139,7 +139,7 @@ func (s *NETHExitScan) ExitScan(operatorId *big.Int) ([]*VnftRecord, error) {
 				OperatorId: operatorId,
 				TokenId:    tokenId,
 				Pubkey:     pubkey,
-				Type:       LiquidStaking,
+				Type:       NETH,
 			})
 		}
 

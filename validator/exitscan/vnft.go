@@ -72,7 +72,7 @@ func (s *VnftExitScan) ExitScan(operatorId *big.Int) ([]*VnftRecord, error) {
 			OperatorId: operatorId,
 			TokenId:    tokenId,
 			Pubkey:     pubkey,
-			Type:       USER,
+			Type:       VNFT,
 		}
 
 		vnfts = append(vnfts, vnft)
