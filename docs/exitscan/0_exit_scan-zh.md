@@ -112,9 +112,9 @@ Validator的退出需要经过beacon的生命周期，退出是异步的，退�
 // Filter The operator needs to implement it by itself, and the easiest way is to use db.
 // An example implementation will be provided, based on MySQL, see Example
 type ExitFilter interface {
-	// Filter To filter Vnft Records that have exited
-	// @return []*interface{} Filtered Vnft Record
-	Filter(operatorId *big.Int, vnftRecords []*VnftRecord) ([]*VnftRecord, error)
+	// Filter To filter for exit
+	// @return []*interface{} Filtered
+	Filter(operatorId *big.Int, records []interface{}) ([]interface{}, error)
 }
 ```
 
@@ -134,11 +134,24 @@ type ExitFilter interface {
 // The simplest way to implement the operator is to use db, see example
 type ExitMarker interface {
 	// ExitMark Mark the exit of the Vnft Record
-	ExitMark(operatorId *big.Int, vnftRecords []*VnftRecord) error
+	ExitMark(operatorId *big.Int, records []interface{}) error
 }
 ```
 
 当Validator发起退出后，将其标记为 exited，以便于 Filter 进行过滤。
 
 **这部分Operator可结合自己的技术进行实现，实现 `ExitMarker` 接口。**
+
+
+
+# Example by MySQL
+
+`ExitFilter` 和 `ExitMarker` 的示例使用MySQL。
+
+sql文件参看：[script/sql](../../script/sql)
+
+- nodedao_validator.sql 用来存储Validator的必要信息（包括：tokenId、operatorId、是否发起退出、所有者等）
+- neth_withdrawal_request.sql 用来存储nETH的largeRequest信息，并标记是否处理退出等信息。
+
+
 
