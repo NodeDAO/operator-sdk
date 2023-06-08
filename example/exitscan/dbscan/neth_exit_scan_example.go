@@ -15,7 +15,7 @@ import (
 
 // CornNethExitScanByDB_Example corn nETH exit scan by db example
 func CornNethExitScanByDB_Example(ctx context.Context) {
-	err := VnftExitScanByDB_Example(ctx)
+	err := NethExitScanByDB_Example(ctx)
 	if err != nil {
 		logger.Errorf("VnftExitScanByDB corn err:%+v", err)
 	}
