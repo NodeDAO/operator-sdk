@@ -23,10 +23,18 @@ type DBFiltrate struct {
 	stakeType exitscan.StakeType
 	vnftOwner exitscan.VnftOwner
 
-	vnftOwnerValidator exitscan.VnftOwnerValidator
+	vnftOwnerValidator       exitscan.VnftOwnerValidator
+	nethExitValidatorCounter exitscan.WithdrawalRequestExitValidatorCounter
+
+	// mid res
+	exitValidatorCount uint32
 }
 
-func NewDBFiltrate(network string, stakeType exitscan.StakeType, vnftOwnerValidator exitscan.VnftOwnerValidator) (*DBFiltrate, error) {
+func NewDBFiltrate(
+	network string,
+	stakeType exitscan.StakeType,
+	vnftOwnerValidator exitscan.VnftOwnerValidator,
+) (*DBFiltrate, error) {
 	return &DBFiltrate{
 		network:            network,
 		stakeType:          stakeType,
@@ -35,6 +43,14 @@ func NewDBFiltrate(network string, stakeType exitscan.StakeType, vnftOwnerValida
 	}, nil
 }
 
+func (e *DBFiltrate) SetExitValidatorCounter(nethExitValidatorCounter exitscan.WithdrawalRequestExitValidatorCounter) {
+	e.nethExitValidatorCounter = nethExitValidatorCounter
+}
+
+// WithdrawalRequestFilter 1. Filter out the withdrawalRequests that have been exited.
+// 2. and calculate the number of validators that nETH needs to exit, according to param withdrawalRequests
+// ------------------------------------------------------------------------------------------------
+// !!! Call 'WithdrawalRequestFilter' before calling 'SetExitValidatorCounter'
 func (e *DBFiltrate) WithdrawalRequestFilter(operatorId *big.Int, withdrawalRequests []*exitscan.WithdrawalRequest) ([]*exitscan.WithdrawalRequest, error) {
 	withdrawalRequestDao := dao.NewNethWithdrawalRequest()
 
@@ -89,12 +105,21 @@ func (e *DBFiltrate) WithdrawalRequestFilter(operatorId *big.Int, withdrawalRequ
 		}
 	}
 
-	return nil, nil
+	counter, err := e.nethExitValidatorCounter.ExitCounter(withdrawals)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Fail to ExitCounter by nethExitValidatorCounter.")
+	}
+	e.exitValidatorCount = counter
+
+	return withdrawals, nil
 }
 
 // Filter If some validator records for vnftContractExitRecords have been marked as is_exit = true in the database, filtering.
 // @param vnftContractExitRecords *[]exitscan.VnftRecord Unfiltered VnftRecord.
 // @return []*exitscan.VnftRecord Filtered VnftRecord.
+// ----------------------------------------------------------------
+// if dbCanExitValidatorCount!=needExitValidatorCount, return error
+// The exitValidatorCount calculated by 'WithdrawalRequestFilter' filters out the specified number of VnftRecords again
 func (e *DBFiltrate) Filter(operatorId *big.Int, vnftContractExitRecords []*exitscan.VnftRecord) ([]*exitscan.VnftRecord, error) {
 	tokenIds := make([]*big.Int, 0, len(vnftContractExitRecords))
 	for _, record := range vnftContractExitRecords {
@@ -118,7 +143,11 @@ func (e *DBFiltrate) Filter(operatorId *big.Int, vnftContractExitRecords []*exit
 		return nil, errors.Errorf("Fail to VerifyVnftOwner.stakeType:%v tokenIds:%+v", e.stakeType, tokenIds)
 	}
 
-	validators := make([]*exitscan.VnftRecord, len(nodedaoValidators))
+	if uint32(len(nodedaoValidators)) < e.exitValidatorCount {
+		return nil, errors.Errorf("Fail to Filter. dbCanExitValidatorCount!=needExitValidatorCount. dbCanExitValidatorCount:%v needExitValidatorCount:%v", len(nodedaoValidators), e.exitValidatorCount)
+	}
+
+	validators := make([]*exitscan.VnftRecord, e.exitValidatorCount)
 	for i, record := range nodedaoValidators {
 		validators[i] = &exitscan.VnftRecord{
 			Network:    e.network,

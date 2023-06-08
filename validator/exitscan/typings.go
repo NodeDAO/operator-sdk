@@ -49,8 +49,9 @@ type WithdrawalRequest struct {
 	WithdrawalRequestInfo *withdrawalRequest.WithdrawalRequestWithdrawalInfo
 }
 
+// VnftOwnerValidator 'VnftOwnerValidator' is used to verify that the relationship between the validator 'StakeType' and 'VnftOwner' is correct.
 type VnftOwnerValidator interface {
-	// VerifyVnftOwner Verify that the stakeType of vnft tokenIds and vnftOwner match
+	// VerifyVnftOwner Verify that the stakeType of vnft tokenIds and vnftOwner match.
 	// ----------------------------------------------------------------
 	// The relationship between StakeType and VnftOwner is as follows:
 	// ----------------------
@@ -61,13 +62,13 @@ type VnftOwnerValidator interface {
 	VerifyVnftOwner(network string, stakeType StakeType, vnftOwner VnftOwner, tokenIds []*big.Int) (bool, error)
 }
 
-// ExitScanner Scan the smart contract for records that need to be exited
+// ExitScanner Scan the smart contract for records that need to be exited.
 type ExitScanner interface {
 	ExitScan(operatorId *big.Int) ([]*VnftRecord, error)
 }
 
 // WithdrawalRequestScanner nETH exit depends on the WithdrawalRequest.
-// vNFT exit can be used directly with Exit Scanner
+// vNFT exit can be used directly with Exit Scanner.
 type WithdrawalRequestScanner interface {
 	ExitScanner
 
@@ -77,37 +78,44 @@ type WithdrawalRequestScanner interface {
 
 // ExitFilter filter the exit for vNFT and nETH.
 // Validator's exit is asynchrony. The reasons for asynchrony are:
-// 1. The validator exit goes through the lifetime of the beacon
-// 2. NodeDAO-Oracle is required to report to settle
+// 1. The validator exit goes through the lifetime of the beacon.
+// 2. NodeDAO-Oracle is required to report to settle.
 // --------------------------------------------
 // Filter The operator needs to implement it by itself, and the easiest way is to use db.
-// An example implementation will be provided, based on MySQL, see Example
+// An example implementation will be provided, based on MySQL, see Example.
 type ExitFilter interface {
 	// Filter To filter for exit
 	// @return []*VnftRecord{} Filtered
 	Filter(operatorId *big.Int, vnftRecords []*VnftRecord) ([]*VnftRecord, error)
 }
 
-// WithdrawalRequestFilter To filter for WithdrawalRequests
+// WithdrawalRequestFilter To filter for WithdrawalRequests.
 // --------------------------------------------
-// The simplest way to implement the operator is to use db, see example
+// The simplest way to implement the operator is to use db, see example.
 type WithdrawalRequestFilter interface {
-	// WithdrawalRequestFilter To filter for WithdrawalRequests
-	// @return []*WithdrawalRequest Filtered WithdrawalRequests
+	// WithdrawalRequestFilter To filter for WithdrawalRequests.
+	// @return []*WithdrawalRequest Filtered WithdrawalRequests.
 	WithdrawalRequestFilter(operatorId *big.Int, withdrawalRequests []*WithdrawalRequest) ([]*WithdrawalRequest, error)
 }
 
-// ExitMarker To perform a validator exit, it needs to be flagged, and then it is used for filter
+// WithdrawalRequestExitValidatorCounter Calculate the number of validators that need to be exited by a Withdrawal Request
+type WithdrawalRequestExitValidatorCounter interface {
+	// ExitCounter Calculate the number of validators that need to be exited by a Withdrawal Request
+	// @param filterWithdrawalRequests  A list of offline filtered Withdrawal Requests
+	ExitCounter(filterWithdrawalRequests []*WithdrawalRequest) (uint32, error)
+}
+
+// ExitMarker To perform a validator exit, it needs to be flagged, and then it is used for filter.
 // --------------------------------------------
-// The simplest way to implement the operator is to use db, see example
+// The simplest way to implement the operator is to use db, see example.
 type ExitMarker interface {
-	// ExitMark Mark the exit of the Vnft Record
+	// ExitMark Mark the exit of the Vnft Record.
 	ExitMark(operatorId *big.Int, vnftRecords []*VnftRecord) error
 }
 
-// WithdrawalRequestMarker To mark deal for WithdrawalRequest
+// WithdrawalRequestMarker To mark deal for WithdrawalRequest.
 // --------------------------------------------
-// The simplest way to implement the operator is to use db, see example
+// The simplest way to implement the operator is to use db, see example.
 type WithdrawalRequestMarker interface {
 	// WithdrawalRequestMark To mark deal for WithdrawalRequest
 	WithdrawalRequestMark(operatorId *big.Int, withdrawalRequests []*WithdrawalRequest) error

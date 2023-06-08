@@ -63,8 +63,8 @@ func NewNETHExitScan(ctx context.Context, network, elAddr string) (*NETHExitScan
 // WithdrawalRequestScan Scanning the smart contract requires processing the exiting WithdrawalRequest.
 // !!! Handling exits is delayed, and additional operations are required to mark and filter the WithdrawalRequest,
 // the simplest way is to use db, see example for this part.
-func (s *NETHExitScan) WithdrawalRequestScan(operatorId *big.Int) ([]*withdrawalRequest.WithdrawalRequestWithdrawalInfo, error) {
-	withdrawalInfos := make([]*withdrawalRequest.WithdrawalRequestWithdrawalInfo, 0)
+func (s *NETHExitScan) WithdrawalRequestScan(operatorId *big.Int) ([]*WithdrawalRequest, error) {
+	withdrawalInfos := make([]*WithdrawalRequest, 0)
 
 	// Iterate through the withdrawal Request in the contract that is not handled by the current operator.
 	// The current withdrawalRequestContract method 'getWithdrawalOfOperator' does not return a requestId and cannot be used at the moment.
@@ -82,14 +82,17 @@ func (s *NETHExitScan) WithdrawalRequestScan(operatorId *big.Int) ([]*withdrawal
 
 		// If the operatorId is the same as the current operatorId, and the withdrawal has not been claimed, it needs to be exited\
 		if operatorId.Cmp(opId) == 0 && !isClaim {
-			withdrawalInfos = append(withdrawalInfos, &withdrawalRequest.WithdrawalRequestWithdrawalInfo{
-				OperatorId:         opId,
-				WithdrawHeight:     withdrawHeight,
-				WithdrawNethAmount: withdrawNethAmount,
-				WithdrawExchange:   withdrawExchange,
-				ClaimEthAmount:     claimEthAmount,
-				Owner:              owner,
-				IsClaim:            isClaim,
+			withdrawalInfos = append(withdrawalInfos, &WithdrawalRequest{
+				ID: big.NewInt(int64(i)),
+				WithdrawalRequestInfo: &withdrawalRequest.WithdrawalRequestWithdrawalInfo{
+					OperatorId:         opId,
+					WithdrawHeight:     withdrawHeight,
+					WithdrawNethAmount: withdrawNethAmount,
+					WithdrawExchange:   withdrawExchange,
+					ClaimEthAmount:     claimEthAmount,
+					Owner:              owner,
+					IsClaim:            isClaim,
+				},
 			})
 		}
 
@@ -149,4 +152,35 @@ func (s *NETHExitScan) ExitScan(operatorId *big.Int) ([]*VnftRecord, error) {
 	}
 
 	return vnfts, nil
+}
+
+// ExitCounter Calculate the number of validators that need to be exited by a Withdrawal Request
+// @param filterWithdrawalRequests  A list of offline filtered Withdrawal Requests
+// --------------------------------------------------------
+// if sumETHAmount = 64 ether, need to exit 2 validator
+// if sumETHAmount = 66 ether, need to exit 3 validator
+func (s *NETHExitScan) ExitCounter(filterWithdrawalRequests []*WithdrawalRequest) (uint32, error) {
+	if len(filterWithdrawalRequests) == 0 {
+		return 0, nil
+	}
+
+	sumETHAmount := big.NewInt(0)
+	for _, request := range filterWithdrawalRequests {
+		sumETHAmount = new(big.Int).Add(sumETHAmount, request.WithdrawalRequestInfo.ClaimEthAmount)
+	}
+
+	if sumETHAmount.Cmp(big.NewInt(0)) == 0 {
+		return 0, nil
+	}
+
+	// Calculate the number of withdrawals The part greater than 32eth needs to withdraw one more
+	vnftScanCount := 0
+	div, mod := new(big.Int).DivMod(sumETHAmount, eth1.ETH32(), new(big.Int))
+	if mod.Cmp(big.NewInt(0)) == 1 {
+		vnftScanCount = int(div.Uint64()) + 1
+	} else {
+		vnftScanCount = int(div.Uint64())
+	}
+
+	return uint32(vnftScanCount), nil
 }
