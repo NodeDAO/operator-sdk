@@ -10,13 +10,19 @@
 
 > vNFT方式的记录，所有者为用户。
 
-3、**Operator自行实现已发起退出的Validator过滤**。
+3、**Operator自行实现过滤withdrawalRequest列表。**
+
+4、**Operator自行实现已发起退出的Validator过滤**。
 
 Validator的退出需要经过beacon的生命周期，退出是异步的，退出完成时间并不确定。发起退出的Validator在Oracle没有上报触发结算，链上数据是并不会更新。因此需要链下的手段来进行过滤。
 
 不同Operator可能存在不同的技术实现，我们提供一种最简单示例用以参考，使用MySQL来实现过滤。
 
-4、**退出Validator并在数据库中进行标记**。
+5、**根据过滤后的withdrawalRequest列表计算退出多少个Validator**。
+
+6、**退出Validator并在数据库中进行标记**。
+
+7、**标记过滤后的withdrawalRequest列表为已处理**。
 
 
 

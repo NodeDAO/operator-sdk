@@ -12,6 +12,9 @@ Validator的退出需要经过beacon的生命周期，退出是异步的，退�
 
 3、**退出Validator并在数据库中进行标记**。
 
+> 上述步骤需要通过定时任务周期执行。
+
+
 
 # 具体实现
 
@@ -19,21 +22,7 @@ Validator的退出需要经过beacon的生命周期，退出是异步的，退�
 
 实现参看：[validator/exitscan/vnft.go](../../validator/exitscan/vnft.go)
 
-测试用例参看：[validator/exitscan/vnft_test.go](../../validator/exitscan/vnft_test.go)   
-
-方法：`TestVnftExitScan_ByLocal`
-
-关键代码：
-
-```go
-// 初始化 vnft exit scan 对象
-vnftExitScan, err := NewVnftExitScan(ctx, config.GlobalConfig.Eth.Network, config.GlobalConfig.Eth.ElAddr)
-require.NoError(t, err)
-
-// 扫描智能合约中需要退出的 vnftRecords
-vnftRecords, err := vnftExitScan.ExitScan(big.NewInt(1))
-require.NoError(t, err)
-```
+方法：`ExitScan`
 
 
 
@@ -63,8 +52,23 @@ require.NoError(t, err)
 
 
 
+## 实现流程示例
+
+代码参看：[example/exitscan/dbscan/vnft_exit_scan_example.go](../../example/exitscan/dbscan/vnft_exit_scan_example.go)
+
+方法：`VnftExitScanByDB_Example`
+
+> 在第三步的代码中，需要退出筛选过的Validator，这部分Operator需要根据自己的技术栈进行实现。
+
+
+
 ## 定时任务 周期性执行
 
 上述三个步骤应当在 **定时任务** 中周期执行，有用户发起 unstake，Operator应当及时退出Validator。
 
-定时任务实现：略
+定时任务调用的方法参看：代码参看：[example/exitscan/dbscan/vnft_exit_scan_example.go](../../example/exitscan/dbscan/vnft_exit_scan_example.go)
+
+方法：`CornVnftExitScanByDB_Example`
+
+> 定时任务实现：略
+
