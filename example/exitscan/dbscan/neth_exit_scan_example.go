@@ -21,10 +21,19 @@ func CornNethExitScanByDB_Example(ctx context.Context) {
 	}
 }
 
-// NethExitScanByDB_Example nETH large request exit scan by db example
+// NethExitScanByDB_Example nETH large request exit scan by db example.
 func NethExitScanByDB_Example(ctx context.Context) error {
+	// init
+	config.InitConfig("../../../conf/config-goerli.dev.yaml")
+	logger.InitLog(config.GlobalConfig.Log.Level, config.GlobalConfig.Log.Format)
+	err := config.InitOnce()
+	if err != nil {
+		return errors.Wrap(err, "Failed to InitOnce.")
+	}
+
 	// !!!!! The operatorId should be changed.
 	operatorId := big.NewInt(1)
+
 	// `config.GlobalConfig` is the global configuration information obtained by reading the configuration file
 	// @see `operator-sdk/config`
 	network := config.GlobalConfig.Eth.Network

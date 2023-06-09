@@ -5,6 +5,7 @@
 package dbscan
 
 import (
+	"github.com/NodeDAO/operator-sdk/common/logger"
 	"github.com/NodeDAO/operator-sdk/contracts/withdrawalRequest"
 	"github.com/NodeDAO/operator-sdk/example/dao"
 	"github.com/NodeDAO/operator-sdk/validator/exitscan"
@@ -111,6 +112,8 @@ func (e *DBFiltrate) WithdrawalRequestFilter(operatorId *big.Int, withdrawalRequ
 	}
 	e.exitValidatorCount = counter
 
+	logger.Infof("Filter success by DB. ExitCounter:%v withdrawals:%+v", counter, withdrawals)
+
 	return withdrawals, nil
 }
 
@@ -121,21 +124,23 @@ func (e *DBFiltrate) WithdrawalRequestFilter(operatorId *big.Int, withdrawalRequ
 // if dbCanExitValidatorCount!=needExitValidatorCount, return error
 // The exitValidatorCount calculated by 'WithdrawalRequestFilter' filters out the specified number of VnftRecords again
 func (e *DBFiltrate) Filter(operatorId *big.Int, vnftContractExitRecords []*exitscan.VnftRecord) ([]*exitscan.VnftRecord, error) {
-	tokenIds := make([]*big.Int, 0, len(vnftContractExitRecords))
+	tokenIds := make([]uint64, 0, len(vnftContractExitRecords))
+	tokenIdBigInts := make([]*big.Int, 0, len(vnftContractExitRecords))
 	for _, record := range vnftContractExitRecords {
-		tokenIds = append(tokenIds, record.TokenId)
+		tokenIds = append(tokenIds, record.TokenId.Uint64())
+		tokenIdBigInts = append(tokenIdBigInts, record.TokenId)
 	}
 
 	recordDao := dao.NewNodedaoValidator()
 
 	// The odds of vnftContractExitRecords are only queried in the database for is_exit = false.
-	nodedaoValidators, err := recordDao.GetByTokenIds(e.network, operatorId, tokenIds, e.stakeType, false)
+	nodedaoValidators, err := recordDao.GetByTokenIds(e.network, operatorId.Uint64(), tokenIds, e.stakeType, false)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Fail to GetByTokenIds by db. network:%s operatorId:%s", e.network, operatorId.String())
 	}
 
 	// Verify the ownership of tokenId again
-	isVerify, err := e.vnftOwnerValidator.VerifyVnftOwner(e.network, e.stakeType, e.vnftOwner, tokenIds)
+	isVerify, err := e.vnftOwnerValidator.VerifyVnftOwner(e.network, e.stakeType, e.vnftOwner, tokenIdBigInts)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Fail to VerifyVnftOwner by db. network:%s operatorId:%s", e.network, operatorId.String())
 	}
@@ -143,19 +148,28 @@ func (e *DBFiltrate) Filter(operatorId *big.Int, vnftContractExitRecords []*exit
 		return nil, errors.Errorf("Fail to VerifyVnftOwner.stakeType:%v tokenIds:%+v", e.stakeType, tokenIds)
 	}
 
-	if uint32(len(nodedaoValidators)) < e.exitValidatorCount {
-		return nil, errors.Errorf("Fail to Filter. dbCanExitValidatorCount!=needExitValidatorCount. dbCanExitValidatorCount:%v needExitValidatorCount:%v", len(nodedaoValidators), e.exitValidatorCount)
+	exitValidatorCount := 0
+	if e.stakeType == exitscan.NETH {
+		if len(nodedaoValidators) < int(e.exitValidatorCount) {
+			return nil, errors.Errorf("Fail to Filter. dbCanExitValidatorCount!=needExitValidatorCount. dbCanExitValidatorCount:%v needExitValidatorCount:%v", len(nodedaoValidators), e.exitValidatorCount)
+		}
+		exitValidatorCount = int(e.exitValidatorCount)
+	} else if e.stakeType == exitscan.VNFT {
+		exitValidatorCount = len(nodedaoValidators)
 	}
 
-	validators := make([]*exitscan.VnftRecord, e.exitValidatorCount)
+	validators := make([]*exitscan.VnftRecord, exitValidatorCount)
 	for i, record := range nodedaoValidators {
 		validators[i] = &exitscan.VnftRecord{
 			Network:    e.network,
 			OperatorId: operatorId,
-			TokenId:    record.TokenId,
+			TokenId:    big.NewInt(int64(record.TokenId)),
 			Pubkey:     record.Pubkey,
 			Type:       record.Type,
 		}
 	}
+
+	logger.Infof("Filter success by DB. validators:%+v", validators)
+
 	return validators, nil
 }

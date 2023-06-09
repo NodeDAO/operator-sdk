@@ -6,6 +6,7 @@ package exitscan
 
 import (
 	"context"
+	"github.com/NodeDAO/operator-sdk/common/logger"
 	"github.com/NodeDAO/operator-sdk/contracts"
 	"github.com/NodeDAO/operator-sdk/contracts/withdrawalRequest"
 	"github.com/NodeDAO/operator-sdk/eth1"
@@ -150,6 +151,8 @@ func (s *NETHExitScan) ExitScan(operatorId *big.Int) ([]*VnftRecord, error) {
 			break
 		}
 	}
+
+	logger.Infof("nETH ExitScan success by contract. stakingPoolTokenIds:%+v", stakingPoolTokenIds)
 
 	return vnfts, nil
 }

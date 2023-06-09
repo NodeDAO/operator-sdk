@@ -6,6 +6,7 @@ package exitscan
 
 import (
 	"context"
+	"github.com/NodeDAO/operator-sdk/common/logger"
 	"github.com/NodeDAO/operator-sdk/contracts"
 	"github.com/NodeDAO/operator-sdk/eth1"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -77,6 +78,8 @@ func (s *VnftExitScan) ExitScan(operatorId *big.Int) ([]*VnftRecord, error) {
 
 		vnfts = append(vnfts, vnft)
 	}
+
+	logger.Infof("vNFT ExitScan success by contract. tokenIds:%+v", tokenIds)
 
 	return vnfts, nil
 }

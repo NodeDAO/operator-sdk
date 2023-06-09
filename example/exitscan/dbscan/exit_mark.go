@@ -5,6 +5,7 @@
 package dbscan
 
 import (
+	"github.com/NodeDAO/operator-sdk/common/logger"
 	"github.com/NodeDAO/operator-sdk/example/dao"
 	"github.com/NodeDAO/operator-sdk/validator/exitscan"
 	"github.com/pkg/errors"
@@ -29,9 +30,9 @@ func NewDBMark(network string) (*DBMark, error) {
 // ExitMark Mark the filtered Vnft Records as exiting for the next filter
 // @param vnftRecords VNFT Records that need to be tagged
 func (e *DBMark) ExitMark(operatorId *big.Int, vnftRecords []*exitscan.VnftRecord) error {
-	tokenIds := make([]*big.Int, 0, len(vnftRecords))
+	tokenIds := make([]uint64, 0, len(vnftRecords))
 	for _, record := range vnftRecords {
-		tokenIds = append(tokenIds, record.TokenId)
+		tokenIds = append(tokenIds, record.TokenId.Uint64())
 	}
 
 	recordDao := dao.NewNodedaoValidator()
@@ -39,6 +40,8 @@ func (e *DBMark) ExitMark(operatorId *big.Int, vnftRecords []*exitscan.VnftRecor
 	if err != nil {
 		return errors.Wrapf(err, "Fail to UpdateExited by db. network:%s operatorId:%s", e.network, operatorId.String())
 	}
+
+	logger.Infof("ExitMark success by DB. tokenIds:%+v", tokenIds)
 
 	return nil
 }
@@ -56,5 +59,8 @@ func (e *DBMark) WithdrawalRequestMark(operatorId *big.Int, withdrawalRequests [
 	if err != nil {
 		return errors.Wrapf(err, "Fail to UpdateExited by db. network:%s operatorId:%s", e.network, operatorId.String())
 	}
+
+	logger.Infof("WithdrawalRequestMark success by DB. withdrawalRequestIds:%+v", withdrawalRequestIds)
+
 	return nil
 }
