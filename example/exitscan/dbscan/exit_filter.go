@@ -89,7 +89,7 @@ func (e *DBFiltrate) WithdrawalRequestFilter(operatorId *big.Int, withdrawalRequ
 		withdrawNethAmount, _ := new(big.Int).SetString(record.WithdrawNethAmount, 0)
 		withdrawExchange, _ := new(big.Int).SetString(record.WithdrawExchange, 0)
 		claimEthAmount, ok := new(big.Int).SetString(record.ClaimEthAmount, 0)
-		withdrawHeight, ok := new(big.Int).SetString(record.WithdrawHeight, 0)
+		withdrawHeight, _ := new(big.Int).SetString(record.WithdrawHeight, 0)
 		if !ok {
 			return nil, errors.New("Fail to string cast big.Int.")
 		}
