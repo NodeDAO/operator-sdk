@@ -31,11 +31,9 @@ func NethExitScanByDB_Example(ctx context.Context) error {
 		return errors.Wrap(err, "Failed to InitOnce.")
 	}
 
-	// !!!!! The operatorId should be changed.
-	operatorId := big.NewInt(1)
-
 	// `config.GlobalConfig` is the global configuration information obtained by reading the configuration file
 	// @see `operator-sdk/config`
+	operatorId := big.NewInt(int64(config.GlobalConfig.Operator.Id))
 	network := config.GlobalConfig.Eth.Network
 	elAddr := config.GlobalConfig.Eth.ElAddr
 
@@ -61,10 +59,11 @@ func NethExitScanByDB_Example(ctx context.Context) error {
 	if err != nil {
 		return errors.Wrap(err, "Failed to new VnftOwnerValidator.")
 	}
-	dbFilter, err := NewDBFiltrate(network, exitscan.VNFT, vnftOwnerVerify)
+	dbFilter, err := NewDBFiltrate(network, exitscan.NETH, vnftOwnerVerify)
 	if err != nil {
 		return errors.Wrap(err, "Failed to new DBFilter.")
 	}
+	dbFilter.SetExitValidatorCounter(exitScan)
 
 	filterWithdrawalRequests, err := dbFilter.WithdrawalRequestFilter(operatorId, withdrawalInfos)
 	if err != nil {
@@ -90,6 +89,7 @@ func NethExitScanByDB_Example(ctx context.Context) error {
 	}
 	err = dbMark.ExitMark(operatorId, filterVnftExitRecords)
 	if err != nil {
+		config.GlobalDB.Rollback()
 		return errors.Wrap(err, "Failed to ExitMark by db.")
 	}
 

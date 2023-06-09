@@ -49,6 +49,19 @@ type WithdrawalRequest struct {
 	WithdrawalRequestInfo *withdrawalRequest.WithdrawalRequestWithdrawalInfo
 }
 
+func (v *WithdrawalRequest) String() string {
+	return fmt.Sprintf("{ID:%s, WithdrawalRequestInfo:{OperatorId:%s, WithdrawHeight:%s, WithdrawNethAmount:%s, WithdrawExchange:%s, ClaimEthAmount:%s, Owner:%s, IsClaim:%v}}",
+		v.ID.String(),
+		v.WithdrawalRequestInfo.OperatorId,
+		v.WithdrawalRequestInfo.WithdrawHeight,
+		v.WithdrawalRequestInfo.WithdrawNethAmount,
+		v.WithdrawalRequestInfo.WithdrawExchange,
+		v.WithdrawalRequestInfo.ClaimEthAmount,
+		v.WithdrawalRequestInfo.Owner,
+		v.WithdrawalRequestInfo.IsClaim,
+	)
+}
+
 // VnftOwnerValidator 'VnftOwnerValidator' is used to verify that the relationship between the validator 'StakeType' and 'VnftOwner' is correct.
 type VnftOwnerValidator interface {
 	// VerifyVnftOwner Verify that the stakeType of vnft tokenIds and vnftOwner match.

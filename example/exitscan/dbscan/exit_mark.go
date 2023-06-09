@@ -49,9 +49,9 @@ func (e *DBMark) ExitMark(operatorId *big.Int, vnftRecords []*exitscan.VnftRecor
 // WithdrawalRequestMark Mark the filtered withdrawalRequests as deal for the next filter
 // @param withdrawalRequests that need to be tagged
 func (e *DBMark) WithdrawalRequestMark(operatorId *big.Int, withdrawalRequests []*exitscan.WithdrawalRequest) error {
-	withdrawalRequestIds := make([]*big.Int, 0, len(withdrawalRequests))
+	withdrawalRequestIds := make([]uint64, 0, len(withdrawalRequests))
 	for _, record := range withdrawalRequests {
-		withdrawalRequestIds = append(withdrawalRequestIds, record.ID)
+		withdrawalRequestIds = append(withdrawalRequestIds, record.ID.Uint64())
 	}
 
 	withdrawalRequestDao := dao.NewNethWithdrawalRequest()

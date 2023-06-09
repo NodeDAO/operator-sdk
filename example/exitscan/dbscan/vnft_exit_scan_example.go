@@ -23,9 +23,6 @@ func CornVnftExitScanByDB_Example(ctx context.Context) {
 
 // VnftExitScanByDB_Example vnft exit scan by db example
 func VnftExitScanByDB_Example(ctx context.Context) error {
-	// !!!!! The operatorId should be changed.
-	operatorId := big.NewInt(1)
-
 	// init
 	config.InitConfig("../../../conf/config-goerli.dev.yaml")
 	logger.InitLog(config.GlobalConfig.Log.Level, config.GlobalConfig.Log.Format)
@@ -36,6 +33,7 @@ func VnftExitScanByDB_Example(ctx context.Context) error {
 
 	// `config.GlobalConfig` is the global configuration information obtained by reading the configuration file
 	// @see `operator-sdk/config`
+	operatorId := big.NewInt(int64(config.GlobalConfig.Operator.Id))
 	network := config.GlobalConfig.Eth.Network
 	elAddr := config.GlobalConfig.Eth.ElAddr
 

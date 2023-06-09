@@ -55,15 +55,15 @@ func (e *DBFiltrate) SetExitValidatorCounter(nethExitValidatorCounter exitscan.W
 func (e *DBFiltrate) WithdrawalRequestFilter(operatorId *big.Int, withdrawalRequests []*exitscan.WithdrawalRequest) ([]*exitscan.WithdrawalRequest, error) {
 	withdrawalRequestDao := dao.NewNethWithdrawalRequest()
 
-	withdrawalRequestIds := make([]*big.Int, 0, len(withdrawalRequests))
+	withdrawalRequestIds := make([]uint64, 0, len(withdrawalRequests))
 	saveWithdrawals := make([]*dao.NethWithdrawalRequest, 0, len(withdrawalRequests))
 	for _, record := range withdrawalRequests {
-		withdrawalRequestIds = append(withdrawalRequestIds, record.ID)
+		withdrawalRequestIds = append(withdrawalRequestIds, record.ID.Uint64())
 		saveWithdrawals = append(saveWithdrawals, &dao.NethWithdrawalRequest{
 			Network:            e.network,
-			OperatorId:         record.WithdrawalRequestInfo.OperatorId,
-			RequestId:          record.ID,
-			WithdrawHeight:     record.WithdrawalRequestInfo.WithdrawHeight,
+			OperatorId:         record.WithdrawalRequestInfo.OperatorId.Uint64(),
+			RequestId:          record.ID.Uint64(),
+			WithdrawHeight:     record.WithdrawalRequestInfo.WithdrawHeight.String(),
 			WithdrawNethAmount: record.WithdrawalRequestInfo.WithdrawNethAmount.String(),
 			WithdrawExchange:   record.WithdrawalRequestInfo.WithdrawExchange.String(),
 			ClaimEthAmount:     record.WithdrawalRequestInfo.ClaimEthAmount.String(),
@@ -78,7 +78,7 @@ func (e *DBFiltrate) WithdrawalRequestFilter(operatorId *big.Int, withdrawalRequ
 	}
 
 	// The odds of withdrawalRequests are only queried in the database for is_exit = false.
-	exitWithdrawalRequests, err := withdrawalRequestDao.GetByRequestIds(e.network, operatorId, withdrawalRequestIds, false)
+	exitWithdrawalRequests, err := withdrawalRequestDao.GetByRequestIds(e.network, operatorId.Uint64(), withdrawalRequestIds, false)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Fail to GetByRequestIds by db. network:%s operatorId:%s", e.network, operatorId.String())
 	}
@@ -89,15 +89,16 @@ func (e *DBFiltrate) WithdrawalRequestFilter(operatorId *big.Int, withdrawalRequ
 		withdrawNethAmount, _ := new(big.Int).SetString(record.WithdrawNethAmount, 0)
 		withdrawExchange, _ := new(big.Int).SetString(record.WithdrawExchange, 0)
 		claimEthAmount, ok := new(big.Int).SetString(record.ClaimEthAmount, 0)
+		withdrawHeight, ok := new(big.Int).SetString(record.WithdrawHeight, 0)
 		if !ok {
 			return nil, errors.New("Fail to string cast big.Int.")
 		}
 
 		withdrawals[i] = &exitscan.WithdrawalRequest{
-			ID: record.RequestId,
+			ID: big.NewInt(int64(record.RequestId)),
 			WithdrawalRequestInfo: &withdrawalRequest.WithdrawalRequestWithdrawalInfo{
-				OperatorId:         record.OperatorId,
-				WithdrawHeight:     record.WithdrawHeight,
+				OperatorId:         big.NewInt(int64(record.OperatorId)),
+				WithdrawHeight:     withdrawHeight,
 				WithdrawNethAmount: withdrawNethAmount,
 				WithdrawExchange:   withdrawExchange,
 				ClaimEthAmount:     claimEthAmount,
@@ -117,7 +118,7 @@ func (e *DBFiltrate) WithdrawalRequestFilter(operatorId *big.Int, withdrawalRequ
 	return withdrawals, nil
 }
 
-// Filter If some validator records for vnftContractExitRecords have been marked as is_exit = true in the database, filtering.
+// Filter If some validator records for vnft ContractExitRecords have been marked as is_exit = true in the database, filtering.
 // @param vnftContractExitRecords *[]exitscan.VnftRecord Unfiltered VnftRecord.
 // @return []*exitscan.VnftRecord Filtered VnftRecord.
 // ----------------------------------------------------------------
