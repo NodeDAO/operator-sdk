@@ -64,6 +64,7 @@ log:
 
 db:
   dsn: root:rsw123456@tcp(127.0.0.1:3306)/operator_sdk?charset=utf8mb4&parseTime=true&loc=Local
+  logLevel: info
 
 eth:
   network: mainnet
@@ -72,7 +73,11 @@ eth:
   # ETH consensus layer connection address
   clAddr:
   # Oracle member's private key（Make enough ETH to support the GAS of transactions; without ‘0x’ prefix）
-  privateKey:`)
+  privateKey:
+
+operator:
+  id:
+  controllerAddressPrivateKey:`)
 
 func ConfConfigDefaultYamlBytes() ([]byte, error) {
 	return _ConfConfigDefaultYaml, nil
@@ -84,7 +89,7 @@ func ConfConfigDefaultYaml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "../conf/config-default.yaml", size: 456, mode: os.FileMode(420), modTime: time.Unix(1685951987, 0)}
+	info := bindataFileInfo{name: "../conf/config-default.yaml", size: 526, mode: os.FileMode(420), modTime: time.Unix(1686291682, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

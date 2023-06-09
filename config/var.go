@@ -41,6 +41,11 @@ type Config struct {
 		ClAddr     string
 		PrivateKey string
 	}
+
+	Operator struct {
+		Id                          uint64
+		ControllerAddressPrivateKey string
+	}
 }
 
 // InitOnce The operation is initialized only once.
