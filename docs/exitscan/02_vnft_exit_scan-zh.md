@@ -32,11 +32,11 @@ Validator的退出需要经过beacon的生命周期，退出是异步的，退�
 >
 > 在过滤退出的Validator前，Validator应当已经在数据库表 `nodedao_validator` 中存在。可以再 `registerValidator`后将其存储到库中，这部分会在 `registerValidator` 操作里说明。现在可以假设 Validator 已经在表 `nodedao_validator` 中。
 
-代码实现参看：[example/exitscan/dbscan/vnft.go](../../example/exitscan/dbscan/vnft.go) 
+示例参看：[example/exitscan/dbscan/exit_filter.go](../../example/exitscan/dbscan/exit_filter.go) 
 
 方法：`Filter`
 
-`vnftExitScan.ExitScan` 在链上扫描的记录 `vnftRecords` ，作为 `Filter` 的入参 `vnftContractExitRecords`。
+`VnftExitScan.ExitScan` 在链上扫描的记录 `vnftRecords` ，作为 `Filter` 的入参 `vnftContractExitRecords`。 
 
 
 
@@ -44,9 +44,9 @@ Validator的退出需要经过beacon的生命周期，退出是异步的，退�
 
 > 此部分示例 这里借助MySQL实现，Operator可以根据具体情况进行实现。
 
-第二步中过滤后的Validators即是Operator需要退出的，Operator需要根据自己的技术实现去发起Validator的退出。 并标记这些Validator已经发起退出，用于下一次的 `Filter`。
+第二步中过滤后的Validators即是Operator需要退出的，**Operator需要根据自己的技术实现去发起Validator的退出**。 并标记这些Validator已经发起退出，用于下一次的 `Filter`。
 
-代码实现参看：[example/exitscan/dbscan/vnft.go](../../example/exitscan/dbscan/vnft.go) 
+示例参看：[example/exitscan/dbscan/exit_mark.go](../../example/exitscan/dbscan/exit_mark.go) 
 
 方法：`ExitMark`
 
@@ -58,7 +58,7 @@ Validator的退出需要经过beacon的生命周期，退出是异步的，退�
 
 方法：`VnftExitScanByDB_Example`
 
-> 在第三步的代码中，需要退出筛选过的Validator，这部分Operator需要根据自己的技术栈进行实现。
+> 在第3步的代码中，需要退出筛选过的Validator，这部分Operator需要根据自己的技术栈进行实现。
 
 
 
