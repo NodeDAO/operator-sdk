@@ -149,3 +149,15 @@ type WithdrawalRequestExitValidatorCounter interface {
 
 > 定时任务实现：略
 
+
+
+# 用户 claim withdrawRequest
+
+当operator 针对withdrawRequest退出validator，并且Oracle上报触发结算后，ETH会回到 Operator Liquidity Pool。
+
+用户还需要进行 Claim，ETH才会会到提款账户。Claim前提条件为：`Withdraw Amount <= Operator Liquidity Pool`。
+
+
+
+![neth claim](../images/neth-claim.jpeg)
+
