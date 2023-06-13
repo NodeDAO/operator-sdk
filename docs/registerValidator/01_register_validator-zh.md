@@ -44,8 +44,46 @@ mapping(uint256 => uint256) public operatorPoolBalances;
 ## 3、NodeDAO registerValidator
 
 > NodeDAO Operator注册时需要设置 controllerAddress，需要使用controllerAddress用来发起 `registerValidator` 。并确保controllerAddress有足够的ETH来支付gas。
+>
+> `registerValidator` 会将operatorPoolBalances的eth注册的deposit合约。
+
+代码实现参看：[validator/register/register_validator.go](../../validator/register/register_validator.go)
 
 
 
+## 4、启动Validator
+
+根据第三步生成的keystore+password，去启动Validator程序。
+
+> 这一部分可以根据Operator的技术栈去实现。
+
+可参看：
+
+- [teku](https://docs.teku.consensys.net/)
+- [prysm](https://docs.prylabs.network/docs/getting-started)
+- ……
 
 
+
+## 5、Other: for exit scan example
+
+在 exitscan 的的例子中，对于Validator的一步退出过滤，我们提供了mysql的实现示例。``exitscan filter`
+
+需要依赖registerValidator的数据。
+
+启动Validator后，可以将Validator的数据存储到mysql的表：`nodedao_validator`。
+
+> 这一部分，Operator可根据具体情况实现。
+
+参看：
+
+- sql：[script/sql/operator-sdk-*.sql](../../script/sql/operator-sdk-*.sql)
+- Example: [example/registerdb/register_validator_example.go](../../example/registerdb/register_validator_example.go)
+
+
+
+## 定时任务 周期性执行
+
+上述三个步骤应当在 **定时任务** 中周期执行，有用户发起 unstake，Operator应当及时退出Validator。
+
+> 定时任务实现：略
