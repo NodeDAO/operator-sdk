@@ -43,6 +43,22 @@ func NewVnftOwnerVerify(ctx context.Context, network, elAddr string) (*VnftOwner
 	}, nil
 }
 
+// VerifyStakeType Verify that the stakeType of vnft tokenIds
+func (e *VnftOwnerVerify) VerifyStakeType(network string, tokenId *big.Int) (StakeType, error) {
+	nETHOwnerExpected := contracts.LiqContractAddress(network)
+
+	vnftOwner, err := e.vnftContract.Contract.OwnerOf(nil, tokenId)
+	if err != nil {
+		return 0, errors.Wrapf(err, "Fail to get vnft owner. network:%s", e.network)
+	}
+
+	if vnftOwner.String() != nETHOwnerExpected {
+		return NETH, nil
+	}
+
+	return VNFT, nil
+}
+
 // VerifyVnftOwner Verify that the stakeType of vnft tokenIds and vnftOwner match
 // ----------------------------------------------------------------
 // The relationship between StakeType and VnftOwner is as follows:
