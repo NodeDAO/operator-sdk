@@ -15,6 +15,7 @@ import (
 	"github.com/NodeDAO/operator-sdk/validator/register"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 	"math/big"
 )
 
@@ -26,7 +27,7 @@ func RegisterValidatorForDB_Example(ctx context.Context) error {
 	if err != nil {
 		return errors.Wrap(err, "Failed to InitOnce.")
 	}
-
+	zap.L().WithOptions()
 	operatorId := big.NewInt(int64(config.GlobalConfig.Operator.Id))
 	network := config.GlobalConfig.Eth.Network
 	elAddr := config.GlobalConfig.Eth.ElAddr
@@ -96,6 +97,9 @@ func RegisterValidatorForDB_Example(ctx context.Context) error {
 
 	nodedaoValidatorDao := dao.NewNodedaoValidator()
 	err = nodedaoValidatorDao.CreateBatch(nodedaoValidators)
+	if err != nil {
+		return errors.Wrapf(err, "Fail to CreateBatch.")
+	}
 
 	return nil
 }

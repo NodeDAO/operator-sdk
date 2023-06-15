@@ -137,7 +137,7 @@ func (e *RegisterValidator) RegisterValidatorForNodeDAO(operatorId int64, deposi
 	// Wait for the transaction to complete
 	receipt, err := bind.WaitMined(context.Background(), e.elClient.Client, tx)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to WaitMined RegisterValidator. tx hash:%s, operatorId:%s", tx.Hash().String(), operatorId)
+		return nil, errors.Wrapf(err, "Failed to WaitMined RegisterValidator. tx hash:%s, operatorId:%v", tx.Hash().String(), operatorId)
 	}
 
 	isSuccess := eth1.TxReceiptSuccess(receipt)

@@ -36,10 +36,9 @@ type Config struct {
 	}
 
 	Eth struct {
-		Network    string
-		ElAddr     string
-		ClAddr     string
-		PrivateKey string
+		Network string
+		ElAddr  string
+		ClAddr  string
 	}
 
 	Operator struct {
