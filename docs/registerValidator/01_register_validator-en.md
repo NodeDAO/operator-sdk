@@ -20,7 +20,7 @@ The way to monitor operatorPoolBalances is in the LiquidStaking contract:
 mapping(uint256 => uint256) public operatorPoolBalances;
 ```
 
-
+> This part directly calls the smart contract, and the operator is universal.
 
 ## 2. Generate keystore and deposit data
 
@@ -45,6 +45,8 @@ Tool Recommendations:
 > `registerValidator` will register the store contract with the eth of operatorPoolBalances.
 
 For code implementation, see: [validator/register/register_validator.go](../../validator/register/register_validator.go)
+
+> This part directly calls the smart contract, and the operator is universal.
 
 ## 4. Start Validator
 

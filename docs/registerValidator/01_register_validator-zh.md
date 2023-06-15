@@ -22,7 +22,7 @@ registerValidatorCount = operatorPoolBalances/32
 // operator's internal stake pool, key is operator_id
 mapping(uint256 => uint256) public operatorPoolBalances;
 ```
-
+> 这部分直接调用智能合约，Operator通用。
 
 
 ## 2、生成keystore和depositData
@@ -49,7 +49,7 @@ mapping(uint256 => uint256) public operatorPoolBalances;
 
 代码实现参看：[validator/register/register_validator.go](../../validator/register/register_validator.go)
 
-
+> 这部分直接调用智能合约，Operator通用。
 
 ## 4、启动Validator
 

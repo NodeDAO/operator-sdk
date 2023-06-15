@@ -36,6 +36,7 @@ Validator的退出需要经过beacon的生命周期，退出是异步的，退�
 
 此方法会扫描链上需要处理WithdrawalRequest，还需要进行去链下过滤。
 
+> 这部分直接调用智能合约，Operator通用。
 
 
 ## 2、在链上获取Operator nETH对应vNFT的记录
@@ -46,7 +47,7 @@ Validator的退出需要经过beacon的生命周期，退出是异步的，退�
 
 此方法会扫描链上未退出并且所有者是LiquidStaking的vNFT记录，还需要进行去链下过滤。
 
-
+> 这部分直接调用智能合约，Operator通用。
 
 ## 3、Operator自行实现过滤withdrawalRequest列表
 

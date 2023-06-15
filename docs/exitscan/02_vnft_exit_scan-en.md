@@ -21,6 +21,8 @@ For implementation, see: [validator/exitscan/vnft.go](../../validator/exitscan/v
 
 Method: `ExitScan`
 
+> This part directly calls the smart contract, and the operator is universal.
+
 ## 2. Filter the Validators that have initiated the exit
 
 > This part of the example Here with the help of MySQL implementation, the operator can be implemented according to the specific situation.

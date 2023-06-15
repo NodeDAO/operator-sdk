@@ -92,6 +92,7 @@ type VnftOwnerValidator interface {
 
 `VnftOwnerValidator` is used to verify that the relationship between the validator `StakeType` and `VnftOwner` is correct.
 
+> This part directly calls the smart contract, and the operator is universal.
 
 ## ExitScanner
 
@@ -110,6 +111,7 @@ Operators can use their methods directly.
 
 vNFT needs to implement `ExitScanner` and nETHLargeRequest needs to implement `WithdrawalRequestScanner`. You also need to use the `ExitFilter` to filter, and finally get the final list of validators that need to be exited.
 
+> This part directly calls the smart contract, and the operator is universal.
 
 ## WithdrawalRequestScanner
 
@@ -133,6 +135,7 @@ nETHLargeRequest scans the list of unprocessed largeRequests on the chain via th
 
 Scan the chain for validators that need to be exited via `ExitScanner`. You also need to use the `ExitFilter` to filter, and finally get the final list of validators that need to be exited.
 
+> This part directly calls the smart contract, and the operator is universal.
 
 ## ExitFilter
 

@@ -24,7 +24,7 @@ Validator的退出需要经过beacon的生命周期，退出是异步的，退�
 
 方法：`ExitScan`
 
-
+> 这部分直接调用智能合约，Operator通用。
 
 ## 2、过滤已发起退出的Validator
 

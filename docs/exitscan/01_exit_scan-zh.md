@@ -96,7 +96,7 @@ type VnftOwnerValidator interface {
 
 `VnftOwnerValidator` 用来验证validator `StakeType` 和 `VnftOwner` 的关系是否正确。
 
-
+> 这部分直接调用智能合约，Operator通用。
 
 ## ExitScanner
 
@@ -115,7 +115,7 @@ Operator可以直接使用其方法。
 
 vNFT需要实现`ExitScanner`，nETHLargeRequest需要实现 `WithdrawalRequestScanner`。还需要使用 `ExitFilter` 去过滤，最后获得最终的需要退出的Validator列表。 
 
-
+> 这部分直接调用智能合约，Operator通用。
 
 ## WithdrawalRequestScanner
 
@@ -140,7 +140,7 @@ nETHLargeRequest通过 `WithdrawalRequestScan` 方法去扫描链上未处理的
 
 通过 `ExitScanner` 扫描链上需要退出的Validator。还需要使用 `ExitFilter` 去过滤，最后获得最终的需要退出的Validator列表。 
 
-
+> 这部分直接调用智能合约，Operator通用。
 
 ## ExitFilter
 

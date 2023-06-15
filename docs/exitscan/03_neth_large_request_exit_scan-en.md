@@ -36,7 +36,7 @@ Method: `WithdrawalRequestScan`
 
 This method scans the chain for WithdrawalRequests and de-chain filtering.
 
-
+> This part directly calls the smart contract, and the operator is universal.
 
 
 ## 2. Obtain the record of Operator nETH corresponding to vNFT on the chain
@@ -47,7 +47,7 @@ Method: `ExitScan`
 
 This method scans vNFT records that are not exited on-chain and owned by LiquidStaking, and also requires de-off-chain filtering.
 
-
+> This part directly calls the smart contract, and the operator is universal.
 
 ## 3. the operator implements the filter withdrawal request list by itself
 
