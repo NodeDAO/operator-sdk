@@ -1,7 +1,7 @@
 # NodeDAO Unstake
 NodeDAO协议支持用户进行unstake：
 1. vNFT直接发起unstake
-2. 32nETH支持largeRequest，通过largeRequest发起unstake；如果小于32nETH，则需要使用Operator的LiquidityPool进行unstake。
+2. 大于32nETH支持largeRequest，通过largeRequest发起unstake；如果小于32nETH，则需要使用Operator的LiquidityPool进行unstake。
 
 **对于vNFT的unstake和nETH的largeRequest，Operator需要主动去退出对应的validator**。
 
@@ -278,8 +278,4 @@ sql文件参看：[script/sql/operator-sdk-*.sql](../../script/sql/operator-sdk-
 - `neth_withdrawal_request` 用来存储nETH的largeRequest信息，并标记是否处理退出等信息。
 
 
-
-## config
-
-一些与配置文件相关的内容，参看：[docs/config.md](../config.md)
 
