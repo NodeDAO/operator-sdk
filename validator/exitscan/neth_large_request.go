@@ -100,6 +100,8 @@ func (s *NETHExitScan) WithdrawalRequestScan(operatorId *big.Int) ([]*Withdrawal
 		i++
 	}
 
+	logger.Infof("nETH ExitScan success by contract. withdrawalInfos:%+v", withdrawalInfos)
+
 	return withdrawalInfos, nil
 }
 
@@ -108,15 +110,6 @@ func (s *NETHExitScan) WithdrawalRequestScan(operatorId *big.Int) ([]*Withdrawal
 // @param operatorId operator id
 func (s *NETHExitScan) ExitScan(operatorId *big.Int) ([]*VnftRecord, error) {
 	vnfts := make([]*VnftRecord, 0)
-
-	// Get the number of active vnft of the operator.
-	vnftActiveCount, err := s.vnftContract.Contract.GetUserActiveNftCountsOfOperator(nil, operatorId)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Fail to get vnftContract GetUserActiveNftCountsOfOperator. network:%s", s.network)
-	}
-	if vnftActiveCount.Cmp(big.NewInt(0)) == 0 {
-		return vnfts, nil
-	}
 
 	// Query the tokenId of all vnfts owned by the LiquidStaking pool
 	stakingPoolTokenIds, err := s.vnftContract.Contract.ActiveNftsOfStakingPool(nil)
@@ -147,9 +140,6 @@ func (s *NETHExitScan) ExitScan(operatorId *big.Int) ([]*VnftRecord, error) {
 			})
 		}
 
-		if vnftActiveCount.Cmp(big.NewInt(int64(len(vnfts)))) == 0 {
-			break
-		}
 	}
 
 	logger.Infof("nETH ExitScan success by contract. stakingPoolTokenIds:%+v", stakingPoolTokenIds)
